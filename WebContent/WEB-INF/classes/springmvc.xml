@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.3.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+
+
+	<!-- 配置自定扫描的包 -->
+	<!-- 扫描 Controller注解 -->
+	<!-- <context:component-scan base-package="com"/> -->
+	<context:component-scan
+		base-package="dao,service,servlet,controller"
+		use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Component" />
+		<!-- <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/> 
+			<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/> -->
+	</context:component-scan>
+	<!-- 扫描controller,service（controller,service层注入） -->
+
+	<!-- 配置视图解析器: 如何把 handler 方法返回值解析为实际的物理视图 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/"></property>
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	
+		<mvc:view-controller path="/gf" view-name="admin/index"/>
+		<mvc:view-controller path="/fg" view-name="foreground/index"/>
+		<mvc:view-controller path="/flg" view-name="flogin/login"/>
+		<mvc:view-controller path="/alg" view-name="flogin/alogin"/>
+		<mvc:view-controller path="/zc" view-name="flogin/register"/>
+
+	<!-- Excel视图解析器 -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+   		<property name="order" value="100"></property>
+   </bean>   
+
+	<!-- 配置国际化资源文件 -->
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource"> 
+		<property name="basename" value="i18n"></property> </bean>
+	<!--国际化 -->
+	<bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+	</bean>
+
+	<mvc:interceptors>
+		<bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"></bean>
+		
+	</mvc:interceptors>
+	
+	<!-- 配置视图  BeanNameViewResolver 解析器: 使用视图的名字来解析视图 -->
+	<!-- 通过 order 属性来定义视图解析器的优先级, order 值越小优先级越高 -->
+	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver">
+		<property name="order" value="0"></property>
+	</bean>
+	
+	<!-- 文件上传 -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+		<property name="maxUploadSize" value="99999999999999"></property>
+		<property name="resolveLazily" value="true" />
+	</bean>
+	<!-- <mvc:interceptors> 配置自定义的拦截器 <bean class="com.interceptors.FirstInterceptor"></bean> 
+		配置拦截器(不)作用的路径 <mvc:interceptor> 拦截指定URL 因为这里有两个拦截器 当指定请求被第一个拦截器拦截后 因为返回了true所以可以继续往下执行 
+		当第二个拦截器拦截是返回了false 所以就直接结束了 关于流程自己去看文档 或者百度(本人在写时知道) 并没有上传成功(这里拦截的是一个上传的Contorller) 
+		<mvc:mapping path="/testFileUploads"/>拦截这个 当要配置不拦截的时 一定先要配置一个拦截的 不拦载 ,配置不拦截前,一定需要先配置拦载. 
+		因为第一个拦截之后返回true 然后继续往下执行 第二个拦截器并没有拦截所以直接通过 所以可以进行下载 <mvc:exclude-mapping 
+		path="/download"/>不拦截这个 <bean class="com.interceptors.SecondInterceptor"></bean> 
+		</mvc:interceptor> 记得一句话,我们配置的国际化需要放入在拦截器里面.就算有自定义拦截器,也需要放进来 <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"></bean> 
+		</mvc:interceptors> -->
+	<!-- 静态资源访问 -->
+	<!-- <mvc:resources mapping="/DataTables/**" location="/DataTables/" /> 
+		<mvc:resources location="/" mapping="/**/*.js"/> <mvc:resources location="/" 
+		mapping="/**/*.css"/> <mvc:resources location="/" mapping="/**/*.jsp"/> <mvc:default-servlet-handler 
+		/> -->
+
+	<mvc:default-servlet-handler />
+	<!-- 在实际开发中通常都需配置 mvc:annotation-driven 标签 --><!-- 基于Schema-based XML的配置定义模式 -->
+	<mvc:annotation-driven></mvc:annotation-driven>
+
+</beans>
